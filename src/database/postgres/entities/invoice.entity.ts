@@ -1,19 +1,35 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { IsNumber, IsString } from 'class-validator';
+
+import { ClientEntity } from './client.entity';
 
 @Entity('invoices')
 export class InvoiceEntity {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-  @Column({ type: 'varchar', nullable: true })
-  name?: string;
+  @Column()
+  name: string;
 
-  @Column({ type: 'jsonb', nullable: true })
-  line_items?: LineItems[];
+  @Column()
+  status: string;
 
-  @Column({ type: 'jsonb', nullable: true, name: 'customer_data' })
+  @Column()
+  quoteNumber: string;
+
+  @Column('jsonb', { nullable: true })
+  lineItems: object[];
+
+  @Column({ nullable: true })
+  issuedAt?: Date;
+
+  @Column('jsonb', { nullable: true })
   customerData?: object;
+
+  @ManyToOne(() => ClientEntity, (client) => client.invoices, {
+    nullable: false,
+  })
+  client: ClientEntity;
 }
 
 export class LineItems {
